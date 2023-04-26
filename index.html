@@ -106,9 +106,12 @@
     // Create puzzles array
     const puzzles = [puzzle];
 
-    function updatePuzzleWithImage(base64String) {
+    function updatePuzzleWithImage(cellId, base64String) {
+      // Get row and column indices from cellId
+      const [row, col] = cellId.split('_').map(str => parseInt(str));
+
       // Update puzzle object with base64 string
-      puzzles[0].correctGridOrder[1].image = base64String;
+      puzzles[0].correctGridOrder[row].image = base64String;
     }
 
     // Add click event listener to download button
@@ -148,27 +151,17 @@
           var img = new Image();
           img.onload = function () {
             img.style.width = '30%';
-            cell.innerHTML = '';
-            cell.appendChild(img);
-            // Convert image to base64 string
-            var canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            var ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            var base64String = canvas.toDataURL('image/png').split(',')[1];
-            console.log(base64String);
-
-            // Update puzzle object with base64 string
-            updatePuzzleWithImage(base64String);
-          };
+            document.getElementById('dialog').style.display = 'block';
+            document.getElementById('image').src = img.src;
+            // Update puzzle with base64 string
+            updatePuzzleWithImage(cellId, reader.result.split(',')[1]);
+          }
           img.src = reader.result;
-        };
+        }
         reader.readAsDataURL(file);
-      };
+      }
       input.click();
     }
-
 
 
     var rowheader1 = document.getElementById('rowheader1');
