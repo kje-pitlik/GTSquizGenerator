@@ -105,13 +105,12 @@
 
     // Create puzzles array
     const puzzles = [puzzle];
-
     function updatePuzzleWithImage(cellId, base64String) {
       // Get row and column indices from cellId
       const [row, col] = cellId.split('_').map(str => parseInt(str));
 
       // Update puzzle object with base64 string
-      puzzles[0].correctGridOrder[row].image = base64String;
+      puzzles[0].correctGridOrder[row * 3 + col].image = base64String;
     }
 
     // Add click event listener to download button
