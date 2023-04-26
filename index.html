@@ -1,122 +1,195 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>Image Table</title>
-	<style>
-		table {
-			border-collapse: collapse;
-			width: 100%;
-		}
+  <title>Image Table</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
 
-		th, td {
-			padding: 8px;
-			text-align: center;
-			border: 1px solid black;
-		}
+    th,
+    td {
+      padding: 8px;
+      text-align: center;
+      border: 1px solid black;
+    }
 
-		button {
-			width: 100%;
-			height: 100%;
-			border: none;
-			background: none;
-			cursor: pointer;
-		}
+    button {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
 
-		.dialog {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			padding: 16px;
-			background-color: white;
-			border: 1px solid black;
-			box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-			z-index: 1;
-			display: none;
-		}
+    .dialog {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 16px;
+      background-color: white;
+      border: 1px solid black;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      display: none;
+    }
 
-		.dialog img {
-   max-width: 30%;
-   height: auto;
-}
-
-	</style>
+    .dialog img {
+      max-width: 30%;
+      height: auto;
+    }
+  </style>
 </head>
+
 <body>
-	<table>
-		<tr>
-			<th></th>
+  <table>
+    <tr>
+      <th></th>
       <th id="rowheader1">Header 11</th>
       <th id="rowheader2">Header 2</th>
       <th id="rowheader3">Header 3</th>
-		</tr>
-		<tr>
-			<th id="colheader1">Header 1</th>
+    </tr>
+    <tr>
+      <th id="colheader1">Header 1</th>
       <td id="1_1"><button onclick="openDialog('1_1')">Click</button></td>
       <td id="1_2"><button onclick="openDialog('1_2')">Click</button></td>
       <td id="1_3"><button onclick="openDialog('1_3')">Click</button></td>
-		</tr>
-		<tr>
-			<th id="colheader2">Header 2</th>
+    </tr>
+    <tr>
+      <th id="colheader2">Header 2</th>
       <td id="2_1"><button onclick="openDialog('2_1')">Click</button></td>
       <td id="2_2"><button onclick="openDialog('2_2')">Click</button></td>
       <td id="2_3"><button onclick="openDialog('2_3')">Click</button></td>
-		</tr>
-		<tr>
-			<th id="colheader3">Header 3</th>
+    </tr>
+    <tr>
+      <th id="colheader3">Header 3</th>
       <td id="3_1"><button onclick="openDialog('3_1')">Click</button></td>
       <td id="3_2"><button onclick="openDialog('3_2')">Click</button></td>
       <td id="3_3"><button onclick="openDialog('3_3')">Click</button></td>
-		</tr>
-	</table>
+    </tr>
+  </table>
+  <button id="download-btn">Download JSON</button>
 
-	<div id="dialog" class="dialog">
-		<img id="image" src="" alt="">
-	</div>
+  <div id="dialog" class="dialog">
+    <img id="image" src="" alt="">
+  </div>
 
-	<script>
-function openDialog(cellId) {
-  var cell = document.getElementById(cellId);
-  var input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = function() {
-    var file = this.files[0];
-    var reader = new FileReader();
-    reader.onload = function() {
-      var img = new Image();
-      img.onload = function() {
-        img.style.width = '30%';
-        cell.innerHTML = '';
-        cell.appendChild(img);
-      };
-      img.src = reader.result;
+  <script>
+    // Get reference to download button
+    const downloadBtn = document.getElementById('download-btn');
+
+    const puzzle = {
+      solutionAccessKey: "",
+      question: "",
+      correctGridOrder: {
+        1: { image: "", placeholder: "" },
+        2: { image: "", placeholder: "" },
+        3: { image: "", placeholder: "" },
+        4: { image: "", placeholder: "" },
+        5: { image: "", placeholder: "" },
+        6: { image: "", placeholder: "" },
+        7: { image: "", placeholder: "" },
+        8: { image: "", placeholder: "" },
+        9: { image: "", placeholder: "" }
+      },
+      sorFejlec1: "",
+      sorFejlec2: "",
+      sorFejlec3: "",
+      oszlopFejlec1: "",
+      oszlopFejlec2: "",
+      oszlopFejlec3: ""
     };
-    reader.readAsDataURL(file);
-  };
-  input.click();
-}
+
+    // Create puzzles array
+    const puzzles = [puzzle];
+
+    function updatePuzzleWithImage(base64String) {
+      // Update puzzle object with base64 string
+      puzzles[0].correctGridOrder[1].image = base64String;
+    }
+
+    // Add click event listener to download button
+    downloadBtn.addEventListener('click', () => {
+      // Create JSON object
+      const json = { puzzles: puzzles[0] };
+
+      // Convert JSON object to string
+      const jsonString = JSON.stringify(json, null, 2);
+
+      // Create new blob with JSON string
+      const blob = new Blob([jsonString], { type: 'application/json' });
+
+      // Create new URL for blob
+      const url = URL.createObjectURL(blob);
+
+      // Create new anchor element for download
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', url);
+      downloadAnchor.setAttribute('download', 'puzzles.json');
+      downloadAnchor.click();
+
+      // Clean up
+      URL.revokeObjectURL(url);
+      downloadAnchor.remove();
+    });
+
+    function openDialog(cellId) {
+      var cell = document.getElementById(cellId);
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = function () {
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onload = function () {
+          var img = new Image();
+          img.onload = function () {
+            img.style.width = '30%';
+            cell.innerHTML = '';
+            cell.appendChild(img);
+            // Convert image to base64 string
+            var canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            var base64String = canvas.toDataURL('image/png').split(',')[1];
+            console.log(base64String);
+
+            // Update puzzle object with base64 string
+            updatePuzzleWithImage(base64String);
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    }
+
 
 
     var rowheader1 = document.getElementById('rowheader1');
     var rowheader2 = document.getElementById('rowheader2');
     var rowheader3 = document.getElementById('rowheader3');
 
-    rowheader1.addEventListener('click', function() {
+    rowheader1.addEventListener('click', function () {
       var text = prompt('Enter new header text:');
       if (text !== null) {
         rowheader1.textContent = text;
       }
     });
 
-    rowheader2.addEventListener('click', function() {
+    rowheader2.addEventListener('click', function () {
       var text = prompt('Enter new header text:');
       if (text !== null) {
         rowheader2.textContent = text;
       }
     });
 
-    rowheader3.addEventListener('click', function() {
+    rowheader3.addEventListener('click', function () {
       var text = prompt('Enter new header text:');
       if (text !== null) {
         rowheader3.textContent = text;
@@ -127,28 +200,40 @@ function openDialog(cellId) {
     var colheader2 = document.getElementById('colheader2');
     var colheader3 = document.getElementById('colheader3');
 
-    colheader1.addEventListener('click', function() {
+    colheader1.addEventListener('click', function () {
       var text = prompt('Enter new header text:');
       if (text !== null) {
         colheader1.textContent = text;
       }
     });
 
-    colheader2.addEventListener('click', function() {
+    colheader2.addEventListener('click', function () {
       var text = prompt('Enter new header text:');
       if (text !== null) {
         colheader2.textContent = text;
       }
     });
 
-    colheader3.addEventListener('click', function() {
+    colheader3.addEventListener('click', function () {
       var text = prompt('Enter new header text:');
       if (text !== null) {
         colheader3.textContent = text;
       }
     });
 
+    // Add click event listeners to grid cells
+    for (let i = 1; i <= 9; i++) {
+      const cell = document.getElementById(`cell${i}`);
+      if (cell) {
+        const puzzleIndex = 0; // Change this to the index of the current puzzle
+        const gridIndex = i;
+        cell.addEventListener('click', () => {
+          openDialog(`cell${i}`, puzzleIndex, gridIndex);
+        });
+      }
+    }
 
-</script>
+  </script>
 </body>
+
 </html>
