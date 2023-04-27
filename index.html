@@ -80,7 +80,7 @@
   <script>
     // Get reference to download button
     const downloadBtn = document.getElementById('download-btn');
-
+  
     const puzzle = {
       solutionAccessKey: "",
       question: "",
@@ -102,44 +102,46 @@
       oszlopFejlec2: "",
       oszlopFejlec3: ""
     };
-
+  
     // Create puzzles array
     const puzzles = [puzzle];
+    
+    // Function to update puzzle object with base64 string
     function updatePuzzleWithImage(cellId, base64String) {
       // Get row and column indices from cellId
       const [row, col] = cellId.split('_').map(str => parseInt(str));
-
+  
       // Update puzzle object with base64 string
       const imageKey = (row - 1) * 3 + col;
       puzzles[0].correctGridOrder[imageKey].image = base64String;
     }
-
-
+  
     // Add click event listener to download button
     downloadBtn.addEventListener('click', () => {
       // Create JSON object
       const json = { puzzles: puzzles[0] };
-
+  
       // Convert JSON object to string
       const jsonString = JSON.stringify(json, null, 2);
-
+  
       // Create new blob with JSON string
       const blob = new Blob([jsonString], { type: 'application/json' });
-
+  
       // Create new URL for blob
       const url = URL.createObjectURL(blob);
-
+  
       // Create new anchor element for download
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute('href', url);
       downloadAnchor.setAttribute('download', 'puzzles.json');
       downloadAnchor.click();
-
+  
       // Clean up
       URL.revokeObjectURL(url);
       downloadAnchor.remove();
     });
-
+  
+    // Function to open dialog and set the image in the table cell
     function openDialog(cellId) {
       var cell = document.getElementById(cellId);
       var input = document.createElement('input');
@@ -152,7 +154,7 @@
           var img = new Image();
           img.onload = function () {
             img.style.width = '30%';
-            document.getElementById('dialog').style.display = 'block';
+            document.getElementById('dialog').style.display = 'hidden';
             document.getElementById('image').src = img.src;
             // Set the image in the table cell
             var cellImg = document.createElement('img');
@@ -160,6 +162,10 @@
             cellImg.style.width = '30%';
             cell.innerHTML = '';
             cell.appendChild(cellImg);
+            
+            // Update puzzle object with base64 string
+            const base64String = reader.result;
+            updatePuzzleWithImage(cellId, base64String);
           }
           img.src = reader.result;
         }
@@ -167,9 +173,7 @@
       }
       input.click();
     }
-
-
-
+  
     var rowheader1 = document.getElementById('rowheader1');
     var rowheader2 = document.getElementById('rowheader2');
     var rowheader3 = document.getElementById('rowheader3');
