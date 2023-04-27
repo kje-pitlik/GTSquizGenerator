@@ -45,6 +45,7 @@
 </head>
 
 <body>
+  <input type="text" name="" id="question" placeholder="add meg a kérdést">
   <table>
     <tr>
       <th></th>
@@ -80,10 +81,9 @@
   <script>
     // Get reference to download button
     const downloadBtn = document.getElementById('download-btn');
-  
     const puzzle = {
       solutionAccessKey: "",
-      question: "",
+      question: document.getElementById("question").value,
       correctGridOrder: {
         1: { image: "", placeholder: "" },
         2: { image: "", placeholder: "" },
@@ -149,6 +149,7 @@
     colheader2.addEventListener('click', function () {
       var text = prompt('Enter new header text:');
       if (text !== null) {
+        colheader2.textContent = text;
         puzzles[0].oszlopFejlec2 = text;
       }
     });
