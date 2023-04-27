@@ -95,13 +95,71 @@
         8: { image: "", placeholder: "" },
         9: { image: "", placeholder: "" }
       },
-      sorFejlec1: "",
-      sorFejlec2: "",
-      sorFejlec3: "",
-      oszlopFejlec1: "",
-      oszlopFejlec2: "",
-      oszlopFejlec3: ""
+      sorFejlec1: document.getElementById('rowheader1').textContent,
+      sorFejlec2: document.getElementById('rowheader2').textContent,
+      sorFejlec3: document.getElementById('rowheader3').textContent,
+      oszlopFejlec1: document.getElementById('colheader1').textContent,
+      oszlopFejlec2: document.getElementById('colheader2').textContent,
+      oszlopFejlec3: document.getElementById('colheader3').textContent
     };
+
+
+    var rowheader1 = document.getElementById('rowheader1');
+    var rowheader2 = document.getElementById('rowheader2');
+    var rowheader3 = document.getElementById('rowheader3');
+
+    rowheader1.addEventListener('click', function () {
+      var text = prompt('Enter new header text:');
+      if (text !== null) {
+        rowheader1.textContent = text;
+
+        puzzles[0].sorFejlec1 = text;
+      }
+    });
+
+    rowheader2.addEventListener('click', function () {
+      var text = prompt('Enter new header text:');
+      if (text !== null) {
+        rowheader2.textContent = text;
+        puzzles[0].sorFejlec2 = text;
+      }
+    });
+
+    rowheader3.addEventListener('click', function () {
+      var text = prompt('Enter new header text:');
+      if (text !== null) {
+        rowheader3.textContent = text;
+
+        puzzles[0].sorFejlec3 = text;
+      }
+    });
+
+    var colheader1 = document.getElementById('colheader1');
+    var colheader2 = document.getElementById('colheader2');
+    var colheader3 = document.getElementById('colheader3');
+
+    colheader1.addEventListener('click', function () {
+      var text = prompt('Enter new header text:');
+      if (text !== null) {
+        colheader1.textContent = text;
+        puzzles[0].oszlopFejlec1 = text;
+      }
+    });
+
+    colheader2.addEventListener('click', function () {
+      var text = prompt('Enter new header text:');
+      if (text !== null) {
+        puzzles[0].oszlopFejlec2 = text;
+      }
+    });
+
+    colheader3.addEventListener('click', function () {
+      var text = prompt('Enter new header text:');
+      if (text !== null) {
+        colheader3.textContent = text;
+        puzzles[0].oszlopFejlec3 = text;
+      }
+    });
   
     // Create puzzles array
     const puzzles = [puzzle];
@@ -174,55 +232,6 @@
       input.click();
     }
   
-    var rowheader1 = document.getElementById('rowheader1');
-    var rowheader2 = document.getElementById('rowheader2');
-    var rowheader3 = document.getElementById('rowheader3');
-
-    rowheader1.addEventListener('click', function () {
-      var text = prompt('Enter new header text:');
-      if (text !== null) {
-        rowheader1.textContent = text;
-      }
-    });
-
-    rowheader2.addEventListener('click', function () {
-      var text = prompt('Enter new header text:');
-      if (text !== null) {
-        rowheader2.textContent = text;
-      }
-    });
-
-    rowheader3.addEventListener('click', function () {
-      var text = prompt('Enter new header text:');
-      if (text !== null) {
-        rowheader3.textContent = text;
-      }
-    });
-
-    var colheader1 = document.getElementById('colheader1');
-    var colheader2 = document.getElementById('colheader2');
-    var colheader3 = document.getElementById('colheader3');
-
-    colheader1.addEventListener('click', function () {
-      var text = prompt('Enter new header text:');
-      if (text !== null) {
-        colheader1.textContent = text;
-      }
-    });
-
-    colheader2.addEventListener('click', function () {
-      var text = prompt('Enter new header text:');
-      if (text !== null) {
-        colheader2.textContent = text;
-      }
-    });
-
-    colheader3.addEventListener('click', function () {
-      var text = prompt('Enter new header text:');
-      if (text !== null) {
-        colheader3.textContent = text;
-      }
-    });
 
     // Add click event listeners to grid cells
     for (let i = 1; i <= 9; i++) {
