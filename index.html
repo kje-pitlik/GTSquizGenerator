@@ -110,8 +110,10 @@
       const [row, col] = cellId.split('_').map(str => parseInt(str));
 
       // Update puzzle object with base64 string
-      puzzles[0].correctGridOrder[row * 3 + col].image = base64String;
+      const imageKey = (row - 1) * 3 + col;
+      puzzles[0].correctGridOrder[imageKey].image = base64String;
     }
+
 
     // Add click event listener to download button
     downloadBtn.addEventListener('click', () => {
@@ -152,8 +154,12 @@
             img.style.width = '30%';
             document.getElementById('dialog').style.display = 'block';
             document.getElementById('image').src = img.src;
-            // Update puzzle with base64 string
-            updatePuzzleWithImage(cellId, reader.result.split(',')[1]);
+            // Set the image in the table cell
+            var cellImg = document.createElement('img');
+            cellImg.src = img.src;
+            cellImg.style.width = '30%';
+            cell.innerHTML = '';
+            cell.appendChild(cellImg);
           }
           img.src = reader.result;
         }
@@ -161,6 +167,7 @@
       }
       input.click();
     }
+
 
 
     var rowheader1 = document.getElementById('rowheader1');
