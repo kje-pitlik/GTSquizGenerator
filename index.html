@@ -198,6 +198,8 @@
           const selectedOption = document.querySelector('input[name="uploadOption"]:checked').value;
 
           let imageUrl;
+          console.log("selected: ");
+          console.log(selectedOption);
           if (selectedOption === 'base64') {
             imageUrl = base64String;
           } else if (selectedOption === 'imageBB') {
