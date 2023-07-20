@@ -143,6 +143,34 @@
       URL.revokeObjectURL(url);
       downloadAnchor.remove();
     });
+    function openDialog(cellId) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          const base64String = reader.result.split(',')[1];
+          updatePuzzleWithImage(cellId, base64String);
+
+          // Load the image into the cell
+          const img = document.createElement('img');
+          img.src = reader.result;
+          img.alt = 'Selected Image';
+          const cell = document.getElementById(cellId);
+          cell.innerHTML = '';
+          cell.appendChild(img);
+        };
+
+        if (file) {
+          reader.readAsDataURL(file);
+        }
+      });
+
+      input.click();
+    }
 
     const rowheader1 = document.getElementById('rowheader1');
     const rowheader2 = document.getElementById('rowheader2');
