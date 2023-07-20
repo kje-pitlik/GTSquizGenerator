@@ -105,6 +105,21 @@
       puzzle.correctGridOrder[imageKey].image = base64String;
     }
 
+    function openDialog(cellId) {
+    const isRowHeader1 = cellId.startsWith('1_');
+    if (isRowHeader1) {
+      const inputValue = prompt('Please enter some data:');
+      if (inputValue) {
+        // Update the cell content with the entered data
+        const cellElement = document.getElementById(cellId);
+        cellElement.innerHTML = inputValue;
+      }
+    } else {
+      // Rest of the code to handle other cell clicks (unchanged)
+    }
+  }
+
+
     // Function to convert puzzle object to TXT format
     function convertPuzzleToTxt() {
       const txt = [];
