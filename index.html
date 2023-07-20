@@ -72,8 +72,11 @@
       <td id="3_3"><button onclick="openDialog('3_3')">Click</button></td>
     </tr>
   </table>
-  <button id="download-btn">Download TXT</button>
+  <button id="download-btn">Download JSON</button>
 
+  <div id="dialog" class="dialog">
+    <img id="image" src="" alt="">
+  </div>
   <script>
     const downloadBtn = document.getElementById('download-btn');
     const puzzle = {
@@ -97,29 +100,13 @@
       oszlopFejlec2: document.getElementById('colheader2').textContent,
       oszlopFejlec3: document.getElementById('colheader3').textContent
     };
-
+  
     // Function to update puzzle object with base64 string
     function updatePuzzleWithImage(cellId, base64String) {
-      // Update puzzle object with base64 string
       const imageKey = parseInt(cellId.split('_')[0]) + parseInt(cellId.split('_')[1]) * 3;
       puzzle.correctGridOrder[imageKey].image = base64String;
     }
-
-    function openDialog(cellId) {
-    const isRowHeader1 = cellId.startsWith('1_');
-    if (isRowHeader1) {
-      const inputValue = prompt('Please enter some data:');
-      if (inputValue) {
-        // Update the cell content with the entered data
-        const cellElement = document.getElementById(cellId);
-        cellElement.innerHTML = inputValue;
-      }
-    } else {
-      // Rest of the code to handle other cell clicks (unchanged)
-    }
-  }
-
-
+  
     // Function to convert puzzle object to TXT format
     function convertPuzzleToTxt() {
       const txt = [];
@@ -130,36 +117,37 @@
       txt.push(`rowheader1: ${puzzle.sorFejlec1}`);
       txt.push(`rowheader2: ${puzzle.sorFejlec2}`);
       txt.push(`rowheader3: ${puzzle.sorFejlec3}`);
-
+  
       for (let i = 1; i <= 9; i++) {
         const imageKey = i;
         const image = puzzle.correctGridOrder[imageKey].image;
         txt.push(`image${i}: ${image}`);
       }
-
+  
       txt.push(`accessKey: ${puzzle.solutionAccessKey}`);
       txt.push(`#end1`);
       return txt.join('\n');
     }
-
+  
     // Add click event listener to download button
     downloadBtn.addEventListener('click', () => {
       const txtContent = convertPuzzleToTxt();
       const blob = new Blob([txtContent], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
-
+  
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute('href', url);
       downloadAnchor.setAttribute('download', 'puzzles.txt');
       downloadAnchor.click();
-
+  
       URL.revokeObjectURL(url);
       downloadAnchor.remove();
     });
-
+  
     // Rest of the script (unchanged)
-
+  
   </script>
+  
 </body>
 
 </html>
