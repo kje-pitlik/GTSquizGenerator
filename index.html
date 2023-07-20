@@ -110,7 +110,10 @@
 <div id="dialog" class="dialog">
   <img id="image" src="" alt="">
 </div>
-
+<div id="upload-option-container">
+  <input type="radio" name="upload-option" value="imageBB" checked> Upload to ImageBB
+  <input type="radio" name="upload-option" value="base64"> Parse to Base64
+</div>
   <script>
     const downloadBtn = document.getElementById('download-btn');
     const puzzle = {
@@ -334,6 +337,7 @@
     }
 
     async function openDialog(cellId) {
+      const selectedOption = document.querySelector('input[name="upload-option"]:checked').value;
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
@@ -342,14 +346,19 @@
         const reader = new FileReader();
 
         reader.onload = async () => {
-          const base64String = reader.result.split(',')[1];
-          const resizedImage = await resizeImage(reader.result, 300, 200); // Set your desired maxWidth and maxHeight
+          let imageData;
+          if (selectedOption === 'imageBB') {
+            imageData = await uploadToImageBB(file);
+          } else {
+            const resizedImage = await resizeImage(reader.result, 300, 200); // Set your desired maxWidth and maxHeight
+            imageData = resizedImage;
+          }
 
-          updatePuzzleWithImage(cellId, resizedImage);
+          updatePuzzleWithImage(cellId, imageData);
 
-          // Load the resized image into the cell
+          // Load the image into the cell
           const img = document.createElement('img');
-          img.src = resizedImage;
+          img.src = imageData;
           img.alt = 'Selected Image';
           const cell = document.getElementById(cellId);
           cell.innerHTML = '';
@@ -363,6 +372,7 @@
 
       input.click();
     }
+
 
 
     function updatePuzzleWithImage(cellId, imageUrl) {
