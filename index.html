@@ -106,7 +106,14 @@
   </tr>
 </table>
 <button id="download-btn">Download JSON</button>
-
+<div>
+  <label>
+    <input type="radio" name="uploadOption" value="base64" checked> Convert to Base64
+  </label>
+  <label>
+    <input type="radio" name="uploadOption" value="imageBB"> Upload to ImageBB
+  </label>
+</div>
 <div id="dialog" class="dialog">
   <img id="image" src="" alt="">
 </div>
@@ -339,8 +346,16 @@
 
         reader.onload = async () => {
           const base64String = reader.result.split(',')[1];
-          const resizedImage = await resizeImage(reader.result, 300, 200); // Set your desired maxWidth and maxHeight
+          const selectedOption = document.querySelector('input[name="uploadOption"]:checked').value;
 
+          let imageUrl;
+          if (selectedOption === 'base64') {
+            imageUrl = base64String;
+          } else if (selectedOption === 'imageBB') {
+            imageUrl = await uploadToImageBB(file);
+          }
+
+          const resizedImage = await resizeImage(reader.result, 300, 200); // Set your desired maxWidth and maxHeight
           updatePuzzleWithImage(cellId, resizedImage);
 
           // Load the resized image into the cell
@@ -359,7 +374,6 @@
 
       input.click();
     }
-
 
     function updatePuzzleWithImage(cellId, imageUrl) {
       const row = parseInt(cellId.split('_')[0]);
