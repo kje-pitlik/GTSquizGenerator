@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
 
-<head>  
+
+<head>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <title>Image Table</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
     table {
       border-collapse: collapse;
       width: 100%;
@@ -22,8 +27,14 @@
       width: 100%;
       height: 100%;
       border: none;
-      background: none;
+      background-color: #007BFF;
+      color: white;
+      font-weight: bold;
       cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
     }
 
     .dialog {
@@ -33,52 +44,73 @@
       transform: translate(-50%, -50%);
       padding: 16px;
       background-color: white;
-      border: 1px solid black;
+      border: 1px solid #007BFF;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
       z-index: 1;
       display: none;
     }
 
     .dialog img {
-      max-width: 30%;
+      max-width: 100%;
       height: auto;
+    }
+
+    #question {
+      padding: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #007BFF;
+      border-radius: 5px;
+    }
+
+    #download-btn {
+      padding: 8px 16px;
+      background-color: #007BFF;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #download-btn:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
+<h1>Image Table</h1>
+<input type="text" name="" id="question" placeholder="Add meg a kérdést">
+<table>
+  <tr>
+    <th></th>
+    <th id="rowheader1">Header 11</th>
+    <th id="rowheader2">Header 2</th>
+    <th id="rowheader3">Header 3</th>
+  </tr>
+  <tr>
+    <th id="colheader1">Header 1</th>
+    <td id="1_1"><button onclick="openDialog('1_1')">Click</button></td>
+    <td id="1_2"><button onclick="openDialog('1_2')">Click</button></td>
+    <td id="1_3"><button onclick="openDialog('1_3')">Click</button></td>
+  </tr>
+  <tr>
+    <th id="colheader2">Header 2</th>
+    <td id="2_1"><button onclick="openDialog('2_1')">Click</button></td>
+    <td id="2_2"><button onclick="openDialog('2_2')">Click</button></td>
+    <td id="2_3"><button onclick="openDialog('2_3')">Click</button></td>
+  </tr>
+  <tr>
+    <th id="colheader3">Header 3</th>
+    <td id="3_1"><button onclick="openDialog('3_1')">Click</button></td>
+    <td id="3_2"><button onclick="openDialog('3_2')">Click</button></td>
+    <td id="3_3"><button onclick="openDialog('3_3')">Click</button></td>
+  </tr>
+</table>
+<button id="download-btn">Download JSON</button>
 
-<body>
-  <input type="text" name="" id="question" placeholder="add meg a kérdést">
-  <table>
-    <tr>
-      <th></th>
-      <th id="rowheader1">Header 11</th>
-      <th id="rowheader2">Header 2</th>
-      <th id="rowheader3">Header 3</th>
-    </tr>
-    <tr>
-      <th id="colheader1">Header 1</th>
-      <td id="1_1"><button onclick="openDialog('1_1')">Click</button></td>
-      <td id="1_2"><button onclick="openDialog('1_2')">Click</button></td>
-      <td id="1_3"><button onclick="openDialog('1_3')">Click</button></td>
-    </tr>
-    <tr>
-      <th id="colheader2">Header 2</th>
-      <td id="2_1"><button onclick="openDialog('2_1')">Click</button></td>
-      <td id="2_2"><button onclick="openDialog('2_2')">Click</button></td>
-      <td id="2_3"><button onclick="openDialog('2_3')">Click</button></td>
-    </tr>
-    <tr>
-      <th id="colheader3">Header 3</th>
-      <td id="3_1"><button onclick="openDialog('3_1')">Click</button></td>
-      <td id="3_2"><button onclick="openDialog('3_2')">Click</button></td>
-      <td id="3_3"><button onclick="openDialog('3_3')">Click</button></td>
-    </tr>
-  </table>
-  <button id="download-btn">Download JSON</button>
+<div id="dialog" class="dialog">
+  <img id="image" src="" alt="">
+</div>
 
-  <div id="dialog" class="dialog">
-    <img id="image" src="" alt="">
-  </div>
   <script>
     const downloadBtn = document.getElementById('download-btn');
     const puzzle = {
