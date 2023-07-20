@@ -185,21 +185,31 @@
       URL.revokeObjectURL(url);
       downloadAnchor.remove();
     });
-    function openDialog(cellId) {
+    async function openDialog(cellId) {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
-      input.addEventListener('change', (event) => {
+      input.addEventListener('change', async (event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
 
-        reader.onload = () => {
+        reader.onload = async () => {
           const base64String = reader.result.split(',')[1];
-          updatePuzzleWithImage(cellId, base64String);
+          const selectedOption = document.querySelector('input[name="uploadOption"]:checked').value;
 
-          // Load the image into the cell
+          let imageUrl;
+          if (selectedOption === 'base64') {
+            imageUrl = base64String;
+          } else if (selectedOption === 'imageBB') {
+            imageUrl = await uploadToImageBB(file);
+          }
+
+          const resizedImage = await resizeImage(reader.result, 300, 200); // Set your desired maxWidth and maxHeight
+          updatePuzzleWithImage(cellId, resizedImage);
+
+          // Load the resized image into the cell
           const img = document.createElement('img');
-          img.src = reader.result;
+          img.src = resizedImage;
           img.alt = 'Selected Image';
           const cell = document.getElementById(cellId);
           cell.innerHTML = '';
