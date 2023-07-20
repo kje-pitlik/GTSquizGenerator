@@ -106,14 +106,7 @@
   </tr>
 </table>
 <button id="download-btn">Download JSON</button>
-<div>
-  <label>
-    <input type="radio" name="uploadOption" value="base64" checked> Convert to Base64
-  </label>
-  <label>
-    <input type="radio" name="uploadOption" value="imageBB"> Upload to ImageBB
-  </label>
-</div>
+
 <div id="dialog" class="dialog">
   <img id="image" src="" alt="">
 </div>
@@ -185,33 +178,21 @@
       URL.revokeObjectURL(url);
       downloadAnchor.remove();
     });
-    async function openDialog(cellId) {
+    function openDialog(cellId) {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
-      input.addEventListener('change', async (event) => {
+      input.addEventListener('change', (event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
 
-        reader.onload = async () => {
+        reader.onload = () => {
           const base64String = reader.result.split(',')[1];
-          const selectedOption = document.querySelector('input[name="uploadOption"]:checked').value;
+          updatePuzzleWithImage(cellId, base64String);
 
-          let imageUrl;
-          console.log("selected: ");
-          console.log(selectedOption);
-          if (selectedOption === 'base64') {
-            imageUrl = base64String;
-          } else if (selectedOption === 'imageBB') {
-            imageUrl = await uploadToImageBB(file);
-          }
-
-          const resizedImage = await resizeImage(reader.result, 300, 200); // Set your desired maxWidth and maxHeight
-          updatePuzzleWithImage(cellId, resizedImage);
-
-          // Load the resized image into the cell
+          // Load the image into the cell
           const img = document.createElement('img');
-          img.src = resizedImage;
+          img.src = reader.result;
           img.alt = 'Selected Image';
           const cell = document.getElementById(cellId);
           cell.innerHTML = '';
@@ -282,31 +263,35 @@
       }
     });
 
+        function uploadToImageBB(file) {
+  var form = new FormData();
+  form.append("image", file);
 
-    function uploadToImageBB(file) {
-      var form = new FormData();
-      form.append("image", file);
-
-      var settings = {
-        "url": "https://api.imgbb.com/1/upload?key=487a82d7c1debe26c6b4c1b91a59f755",
-        "method": "POST",
-        "timeout": 0,
-        "processData": false,
-        "mimeType": "multipart/form-data",
-        "contentType": false,
-        "data": form
-      };
-
-      return new Promise((resolve, reject) => {
-        $.ajax(settings).done(function (response) {
-          var jx = JSON.parse(response);
-          resolve(jx.data.url);
-        }).fail(function (error) {
-          reject(error);
-        });
-      });
+  var settings = {
+    "url": "https://api.imgbb.com/1/upload",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form,
+    "headers": {
+      "Authorization": "Bearer 487a82d7c1debe26c6b4c1b91a59f755" // Replace YOUR_IMAGEBB_API_KEY with your actual API key
     }
-    function resizeImage(imageSrc, maxWidth, maxHeight) {
+  };
+
+  return new Promise((resolve, reject) => {
+    $.ajax(settings).done(function (response) {
+      var jx = JSON.parse(response);
+      resolve(jx.data.url);
+    }).fail(function (error) {
+      reject(error);
+    });
+  });
+}
+
+    
+  function resizeImage(imageSrc, maxWidth, maxHeight) {
       return new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = function() {
@@ -358,16 +343,8 @@
 
         reader.onload = async () => {
           const base64String = reader.result.split(',')[1];
-          const selectedOption = document.querySelector('input[name="uploadOption"]:checked').value;
-
-          let imageUrl;
-          if (selectedOption === 'base64') {
-            imageUrl = base64String;
-          } else if (selectedOption === 'imageBB') {
-            imageUrl = await uploadToImageBB(file);
-          }
-
           const resizedImage = await resizeImage(reader.result, 300, 200); // Set your desired maxWidth and maxHeight
+
           updatePuzzleWithImage(cellId, resizedImage);
 
           // Load the resized image into the cell
@@ -386,6 +363,7 @@
 
       input.click();
     }
+
 
     function updatePuzzleWithImage(cellId, imageUrl) {
       const row = parseInt(cellId.split('_')[0]);
