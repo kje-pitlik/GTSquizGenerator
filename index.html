@@ -229,7 +229,66 @@
       }
     });
 
-    // Rest of the script (unchanged)
+
+    function uploadToImageBB(file) {
+      var form = new FormData();
+      form.append("image", file);
+
+      var settings = {
+        "url": "https://api.imgbb.com/1/upload?key=487a82d7c1debe26c6b4c1b91a59f755",
+        "method": "POST",
+        "timeout": 0,
+        "processData": false,
+        "mimeType": "multipart/form-data",
+        "contentType": false,
+        "data": form
+      };
+
+      return new Promise((resolve, reject) => {
+        $.ajax(settings).done(function (response) {
+          var jx = JSON.parse(response);
+          resolve(jx.data.url);
+        }).fail(function (error) {
+          reject(error);
+        });
+      });
+    }
+
+    async function openDialog(cellId) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+
+        try {
+          const imageUrl = await uploadToImageBB(file);
+          updatePuzzleWithImage(cellId, imageUrl);
+
+          // Load the image into the cell
+          const img = document.createElement('img');
+          img.src = imageUrl;
+          img.alt = 'Selected Image';
+          const cell = document.getElementById(cellId);
+          cell.innerHTML = '';
+          cell.appendChild(img);
+        } catch (error) {
+          console.error('Error uploading image:', error);
+        }
+      });
+
+      input.click();
+    }
+
+    function updatePuzzleWithImage(cellId, imageUrl) {
+      const row = parseInt(cellId.split('_')[0]);
+      const col = parseInt(cellId.split('_')[1]);
+      const imageKey = col + (row - 1) * 3;
+      puzzle.correctGridOrder[imageKey].image = imageUrl;
+    }
+
+
+
 
   </script>
 
